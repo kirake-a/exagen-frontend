@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { getMe } from '../api/userService';
-import type { UserResponse } from '../interfaces/userInterfaces';
+import { getMe } from '../../../common/api/userService';
+import type { UserResponse } from '../../../common/interfaces/userInterfaces';
 
 export const DashboardPage = () => {
   const [user, setUser] = useState<UserResponse | null>(null);

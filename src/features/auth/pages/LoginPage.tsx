@@ -9,8 +9,8 @@ import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 
 import { Footer } from '../components/Footer';
-import type { LoginRequest } from '../interfaces/logInInterfaces';
-import { loginUser, saveAuthToken } from '../api/authService';
+import type { LoginRequest } from '../../../common/interfaces/logInInterfaces';
+import { loginUser, saveAuthToken } from '../../../common/api/authService';
 
 interface LoginFormErrors {
   username?: string;
