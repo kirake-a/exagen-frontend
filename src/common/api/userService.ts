@@ -1,6 +1,6 @@
 import axios from 'axios';
-import apiClient from '../../../common/config/axiosConfig';
-import type { ResponseWrapper } from '../../../common/interfaces/responseWrapper';
+import apiClient from '../config/axiosConfig';
+import type { ResponseWrapper } from '../interfaces/responseWrapper';
 import type { UserResponse } from '../interfaces/userInterfaces';
 
 export const getMe = async (): Promise<ResponseWrapper<UserResponse>> => {

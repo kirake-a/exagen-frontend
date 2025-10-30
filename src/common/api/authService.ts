@@ -7,8 +7,8 @@ import type {
   SignUpRequest,
   SignUpResponse,
 } from '../interfaces/signUpInterfaces';
-import type { ResponseWrapper } from '../../../common/interfaces/responseWrapper';
-import apiClient from '../../../common/config/axiosConfig';
+import type { ResponseWrapper } from '../interfaces/responseWrapper';
+import apiClient from '../config/axiosConfig';
 
 export const registerUser = async (
   userData: SignUpRequest
