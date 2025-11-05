@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './common/styles/index.css';
+import './common/styles/AddQuestionStyles.css';
 import App from './common/components/App';
 import { BrowserRouter } from 'react-router';
 import { PrimeReactProvider } from 'primereact/api';

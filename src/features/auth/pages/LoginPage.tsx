@@ -160,7 +160,7 @@ export const LoginPage = () => {
 
         <article className="mx-auto">
           <Link to="/reset-password">
-            <p className="underline">You forgot your password?</p>
+            <p className="underline justify-start">You forgot your password?</p>
           </Link>
         </article>
       </section>

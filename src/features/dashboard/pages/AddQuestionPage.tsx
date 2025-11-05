@@ -1,115 +1,233 @@
-import React, { useState, type FormEvent, type ChangeEvent } from 'react';
+import React, { useState, type FormEvent, type ChangeEvent, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Card } from 'primereact/card';
+import { InputTextarea } from 'primereact/inputtextarea';
+import { InputText } from 'primereact/inputtext';
+import { RadioButton } from 'primereact/radiobutton';
+import { Button } from 'primereact/button';
+import { Toast } from 'primereact/toast';
+
 type QuestionType = 'open' | 'closed';
 
-import { useNavigate } from 'react-router-dom';
+interface QuestionData {
+  questionType: QuestionType;
+  questionText: string;
+  answers: string[];
+  correctAnswerIndex: number | null;
+}
 
 export const AddQuestionPage: React.FC = () => {
-  const [questionType, setQuestionType] = useState<QuestionType>('closed');
-  const [questionText, setQuestionText] = useState<string>('');
-  const [answers, setAnswers] = useState<string[]>(['', '', '', '']);
-  const [correctAnswerIndex, setCorrectAnswerIndex] = useState<number | null>(null);
+  const [questions, setQuestions] = useState<QuestionData[]>([
+    {
+      questionType: 'closed',
+      questionText: '',
+      answers: ['', '', '', ''],
+      correctAnswerIndex: null,
+    },
+  ]);
+
+  const toast = useRef<Toast>(null);
   const navigate = useNavigate();
 
-  const handleAnswerChange = (index: number, value: string): void => {
-    const newAnswers: string[] = [...answers];
-    newAnswers[index] = value;
-    setAnswers(newAnswers);
+  const showMessage = (
+    severity: 'success' | 'warn' | 'error' | 'info',
+    summary: string,
+    detail: string
+  ) => {
+    toast.current?.show({ severity, summary, detail, life: 3000 });
   };
 
-  const handleSubmit = (e: FormEvent): void => {
-    e.preventDefault();
-    if (questionType === 'closed' && correctAnswerIndex === null) {
-      alert('Please mark the correct answer for the closed question.');
-      return;
-    }
-    console.log('Submitting Question:', {
-      questionType,
-      questionText,
-      answers,
-      correctAnswerIndex,
+  const handleQuestionChange = (index: number, field: keyof QuestionData, value: any) => {
+    const updated = [...questions];
+    (updated[index] as any)[field] = value;
+    setQuestions(updated);
+  };
+
+  const handleAnswerChange = (qIndex: number, aIndex: number, value: string) => {
+    const updated = [...questions];
+    updated[qIndex].answers[aIndex] = value;
+    setQuestions(updated);
+  };
+
+  const addNewQuestionForm = () => {
+    setQuestions((prev) => [
+      ...prev,
+      {
+        questionType: 'closed',
+        questionText: '',
+        answers: ['', '', '', ''],
+        correctAnswerIndex: null,
+      },
+    ]);
+    showMessage('info', 'New Question', 'A new question form has been added.');
+  };
+
+  const deleteQuestion = (index: number) => {
+    setQuestions((prev) => {
+      const updated = [...prev];
+      updated.splice(index, 1);
+      return updated.length > 0
+        ? updated
+        : [
+            {
+              questionType: 'closed',
+              questionText: '',
+              answers: ['', '', '', ''],
+              correctAnswerIndex: null,
+            },
+          ];
     });
-    alert(`Question of type "${questionType}" submitted (frontend only)`);
-    navigate('/create-exams');
+    showMessage('warn', 'Question Deleted', `Question ${index + 1} removed.`);
   };
 
-  const renderAnswerFields = () => (
-    <div className="closedAnswers">
-      {' '}
-      <h3 className="answerHeader">Closed-Ended Options (Select One Correct)</h3>
-      {answers.map((answer, index) => (
-        <div key={index} className="answerRow">
-          <input
-            type="radio"
-            name="correctAnswer"
-            checked={correctAnswerIndex === index}
-            onChange={() => setCorrectAnswerIndex(index)}
-            className="radio"
-            required={questionType === 'closed'}
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    for (let i = 0; i < questions.length; i++) {
+      const q = questions[i];
+      if (!q.questionText.trim()) {
+        showMessage('warn', 'Missing Question', `Question ${i + 1} has no text.`);
+        return;
+      }
+      if (q.questionType === 'closed') {
+        if (q.answers.some((a) => !a.trim())) {
+          showMessage('warn', 'Incomplete Answers', `Question ${i + 1} has empty answers.`);
+          return;
+        }
+        if (q.correctAnswerIndex === null) {
+          showMessage(
+            'warn',
+            'Missing Correct Answer',
+            `Question ${i + 1} has no correct answer selected.`
+          );
+          return;
+        }
+      }
+    }
+
+    console.log('Submitting all questions:', questions);
+    showMessage('success', 'Saved', `${questions.length} questions submitted!`);
+    setTimeout(() => navigate('/create-exams'), 1000);
+  };
+
+  const renderAnswerFields = (qIndex: number, q: QuestionData) => (
+    <div className="flex flex-col gap-4">
+      <h3 className="text-lg font-medium">Closed-Ended Options (Select One Correct)</h3>
+      {q.answers.map((answer, aIndex) => (
+        <div key={aIndex} className="flex items-center gap-3">
+          <RadioButton
+            inputId={`answer-${qIndex}-${aIndex}`}
+            name={`correctAnswer-${qIndex}`}
+            value={aIndex}
+            onChange={() => handleQuestionChange(qIndex, 'correctAnswerIndex', aIndex)}
+            checked={q.correctAnswerIndex === aIndex}
           />
-          <input
-            type="text"
+          <InputText
             value={answer}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              handleAnswerChange(index, e.target.value)
+              handleAnswerChange(qIndex, aIndex, e.target.value)
             }
-            placeholder={`Answer Option ${index + 1}`}
-            className="answerInput"
+            placeholder={`Answer Option ${aIndex + 1}`}
+            className="w-full"
             required
           />
         </div>
       ))}
-      <p className="requirementNote">
-        REQUIREMENT: There must always be FOUR possible ANSWERS, and the CORRECT ANSWER must be
-        MARKED.
+      <p className="text-sm text-gray-500 mt-2">
+        <strong>Requirement:</strong> There must always be <b>FOUR possible answers</b>, and one
+        must be marked as correct.
       </p>
     </div>
   );
 
   return (
-    <div className="container">
-      {' '}
-      <h1 className="header">Add New Question</h1>
-      <form onSubmit={handleSubmit} className="form">
-        {' '}
-        <section className="section">
-          <h2 className="subheader">Select Question Type</h2>
-          <div className="typeSelector">
-            <label className="radioLabel">
-              <input
-                type="radio"
-                value="open"
-                checked={questionType === 'open'}
-                onChange={() => setQuestionType('open')}
-              />{' '}
-              Open-Ended
-            </label>
-            <label className="radioLabel">
-              <input
-                type="radio"
-                value="closed"
-                checked={questionType === 'closed'}
-                onChange={() => setQuestionType('closed')}
-              />{' '}
-              Closed-Ended
-            </label>
-            <p className="note"> Only open and closed types are handled for the time being.</p>
-          </div>
-        </section>
-        <section className="section">
-          <h2 className="subheader">Question Text</h2>
-          <textarea
-            value={questionText}
-            onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setQuestionText(e.target.value)}
-            placeholder="Enter the main question text here..."
-            className="textarea"
-            required
+    <div className="flex flex-col min-h-[100dvh] max-w-4xl mx-auto p-6">
+      <Toast ref={toast} />
+
+      <header className="text-center mt-8 mb-6">
+        <h1 className="text-3xl font-semibold mb-2">Add New Question(s)</h1>
+        <p className="text-gray-500 text-sm">
+          You can create one or multiple questions below before saving them.
+        </p>
+      </header>
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+        {questions.map((q, qIndex) => (
+          <Card
+            key={qIndex}
+            title={`Question ${qIndex + 1}`}
+            className="shadow-md border border-gray-100 relative"
+          >
+            <div className="flex flex-col md:flex-row gap-6 mb-4">
+              <div className="flex items-center gap-2">
+                <RadioButton
+                  inputId={`open-${qIndex}`}
+                  name={`type-${qIndex}`}
+                  value="open"
+                  onChange={() => handleQuestionChange(qIndex, 'questionType', 'open')}
+                  checked={q.questionType === 'open'}
+                />
+                <label htmlFor={`open-${qIndex}`} className="text-gray-700">
+                  Open-Ended
+                </label>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <RadioButton
+                  inputId={`closed-${qIndex}`}
+                  name={`type-${qIndex}`}
+                  value="closed"
+                  onChange={() => handleQuestionChange(qIndex, 'questionType', 'closed')}
+                  checked={q.questionType === 'closed'}
+                />
+                <label htmlFor={`closed-${qIndex}`} className="text-gray-700">
+                  Closed-Ended
+                </label>
+              </div>
+            </div>
+
+            <InputTextarea
+              value={q.questionText}
+              onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+                handleQuestionChange(qIndex, 'questionText', e.target.value)
+              }
+              rows={4}
+              className="w-full mb-4"
+              placeholder="Enter the question text..."
+              required
+            />
+
+            {q.questionType === 'closed' && renderAnswerFields(qIndex, q)}
+
+            <div className="flex justify-end mt-5">
+              <Button
+                type="button"
+                icon="pi pi-trash"
+                label="Delete Question"
+                className="p-button-danger"
+                onClick={() => deleteQuestion(qIndex)}
+              />
+            </div>
+          </Card>
+        ))}
+
+        <div className="flex justify-center">
+          <Button
+            type="button"
+            label="Add Another Question"
+            icon="pi pi-plus"
+            className="p-button-info px-5"
+            onClick={addNewQuestionForm}
           />
-        </section>
-        {questionType === 'closed' && <section className="section">{renderAnswerFields()}</section>}
-        <div className="submitArea">
-          <button type="submit" className="button">
-            Save Question to System
-          </button>
+        </div>
+
+        <div className="flex justify-center mt-4">
+          <Button
+            type="submit"
+            label="Save All Questions"
+            icon="pi pi-save"
+            className="p-button-success px-6"
+          />
         </div>
       </form>
     </div>
