@@ -18,7 +18,7 @@ interface ChangePasswordFormErrors {
 
 export const ChangePasswordPage = () => {
   const toast = useRef<Toast>(null);
-  const policy = useRef(null);
+  const policy = useRef<OverlayPanel>(null);
 
   const [step, setStep] = useState('email');
   const [email, setEmail] = useState('');
@@ -59,6 +59,7 @@ export const ChangePasswordPage = () => {
       return;
     }
 
+    // simulate sending email for password reset
     setTimeout(() => {
       setStep('password');
     }, 400);
@@ -105,8 +106,6 @@ export const ChangePasswordPage = () => {
     } catch (error) {
       showError('An unexpected error occurred. Please try again later.');
       console.error('Password change error:', error);
-      setLoading(false);
-      return;
     } finally {
       setLoading(false);
     }
@@ -143,7 +142,12 @@ export const ChangePasswordPage = () => {
               </FloatLabel>
             </div>
             <div>
-              <Button label="Continue" onClick={handleEmailSubmit} className="pl-10 pr-10 w-full" loading={loading} />
+              <Button
+                label="Continue"
+                onClick={handleEmailSubmit}
+                className="pl-10 pr-10 w-full"
+                loading={loading}
+              />
             </div>
           </article>
         </section>
@@ -176,7 +180,7 @@ export const ChangePasswordPage = () => {
                 <div className="card mt-1">
                   <button
                     className="underline cursor-pointer text-sm text-gray-500 bg-transparent border-none p-0 text-left"
-                    onClick={(e) => policy.current.toggle(e)}
+                    onClick={(e) => policy.current?.toggle(e)}
                   >
                     Password policy
                   </button>
