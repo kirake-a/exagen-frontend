@@ -66,7 +66,7 @@ export const resetPassword = async (
 
     throw new Error('An unexpected error occurred during password reset.');
   }
-}
+};
 
 export const saveAuthToken = (token: string) => {
   localStorage.setItem('authToken', token);
