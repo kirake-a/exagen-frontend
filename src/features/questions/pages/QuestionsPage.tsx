@@ -6,17 +6,17 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { useNavigate } from "react-router-dom";
 
-interface Exam { // pasar a archivo de tipos y este es mock
+interface Question {
   id: number;
   name: string;
   date: string;
 }
 
-export const ExamsPage: React.FC = () => {
+export const QuestionsPage: React.FC = () => {
     
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<string | null>(null);
-  const [exams, setExams] = useState<Exam[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
 
   const statusOptions = [
     { label: "All", value: "all" },
@@ -29,18 +29,18 @@ export const ExamsPage: React.FC = () => {
   }, [search, status]);
 
   const fetchData = async () => {
-    console.log("Fetching exams with filters:", { search, status });
-    setExams([
-      { id: 1, name: "Math Exam", date: "2025-11-01" },
-      { id: 2, name: "History Exam", date: "2025-11-10" },
+    console.log("Fetching questions with filters:", { search, status });
+    setQuestions([
+      { id: 1, name: "Math Question", date: "2025-11-01" },
+      { id: 2, name: "History Question", date: "2025-11-10" },
     ]);
   };
 
   const handleCreate = () => {
-    navigate('/create-exams')
+    navigate('/create-questions')
   };
 
-  const actionTemplate = (rowData: Exam) => ( //rawData representa cada fila
+  const actionTemplate = (rowData: Question) => ( 
     <div className="flex gap-2">
       <p>{rowData.name}</p>
       <Button icon="pi pi-eye" rounded text severity="info" tooltip="See" />
@@ -54,10 +54,10 @@ export const ExamsPage: React.FC = () => {
         <div className="flex align-items-center justify-content-between">
             <div className="flex align-items-center gap-2">
                 <Button icon="pi pi-arrow-left" text onClick={() => navigate(-1)} />
-                <h2 className="m-0">Exams</h2>
+                <h2 className="m-0">Questions</h2>
             </div>
 
-            <Button icon="pi pi-plus" label={`Create Exam`} onClick={handleCreate} />
+            <Button icon="pi pi-plus" label={`Create Question`} onClick={handleCreate} />
         </div>
         <div className="flex gap-2 mb-3 align-items-center pt-5">
             <span className="p-input-icon-left grow">
@@ -78,7 +78,7 @@ export const ExamsPage: React.FC = () => {
             />
         </div>
 
-        <DataTable value={exams} responsiveLayout="scroll">
+        <DataTable value={questions} responsiveLayout="scroll">
             <Column field="name" header="Exam Name" />
             <Column field="date" header="Date" />
             <Column body={actionTemplate} header="Actions" />

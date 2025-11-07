@@ -3,8 +3,6 @@ import { getMe } from '../../../common/api/userService';
 import type { UserResponse } from '../../../common/interfaces/userInterfaces';
 import { RecentExams } from '../components/RecentExams';
 import { RecentSurveys } from '../components/RecentSurveys';
-import { SidebarMenu } from '../components/SideBarMenu';
-
 export const DashboardPage = () => {
   const [user, setUser] = useState<UserResponse | null>(null);
 
@@ -30,9 +28,6 @@ export const DashboardPage = () => {
     <div>
      {/* {user ?  */}
         <div className="flex flex-column md:flex-row h-screen surface-ground">
-        <div className="p-3 md:p-0 md:w-3/12">
-          <SidebarMenu />
-        </div>
         <div className="flex flex-column w-full md:w-9/12 p-4 overflow-auto">
           <h2 className="mb-4 text-center md:text-left">
             Welcome Back Loba AWuu, {user?.name} 
