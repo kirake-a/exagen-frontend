@@ -3,10 +3,10 @@ import { LoginPage } from "../../features/auth/pages/LoginPage";
 import { RegisterPage } from "../../features/auth/pages/RegisterPage";
 import { ChangePasswordPage } from "../../features/auth/pages/ChangePasswordPage";
 import { DashboardPage } from "../../features/dashboard/pages/DashboardPage";
-import { ExamsPage } from "../../features/exams/pages/ExamsPage";
+import  ExamsPage  from "../../features/exams/pages/ExamsPage";
 import { MainLayout } from "../../features/layout/MainLayout";
-import { QuestionsPage } from "../../features/questions/pages/QuestionsPage";
-import { SurveysPage } from "../../features/surveys/pages/SurveysPage";
+import QuestionsPage from "../../features/questions/pages/QuestionsPage";
+import SurveysPage  from "../../features/surveys/pages/SurveysPage";
 
 export const AppRouter = () => {
   return (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
@@ -12,7 +12,7 @@ interface Survey {
   date: string;
 }
 
-export const SurveysPage: React.FC = () => {
+export default function SurveysPage() {
   
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<string | null>(null);

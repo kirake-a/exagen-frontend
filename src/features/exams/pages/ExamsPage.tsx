@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
@@ -12,7 +12,7 @@ interface Exam { // pasar a archivo de tipos y este es mock
   date: string;
 }
 
-export const ExamsPage: React.FC = () => {
+export default function ExamsPage() {
     
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<string | null>(null);

@@ -3,7 +3,7 @@ import { Button } from "primereact/button";
 import { Panel } from "primereact/panel";
 import { useNavigate, useLocation } from "react-router-dom";
 
-export const SidebarMenu: React.FC = () => {
+export default function SidebarMenu() {
   const navigate = useNavigate();
   const location = useLocation();
 
