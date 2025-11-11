@@ -73,31 +73,30 @@ export const ExamCreationPage: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col min-h-[100dvh] max-w-4xl mx-auto p-6">
-      <Toast ref={toast} />
+    <div className="p-5">
+      <div className="flex align-items-center justify-content-between">
+        <div className="flex align-items-center gap-2">
+          <Button icon="pi pi-arrow-left" text onClick={() => navigate(-1)} />
+          <h2 className="m-0">Create New Exam</h2>
+        </div>
+        <Button icon="pi pi-plus" label={`Add Question`} onClick={handleAddNewQuestion} />
+      </div>
 
-      <header className="text-center mt-8 mb-6">
-        <h1 className="text-3xl font-semibold mb-2">Create New Exam</h1>
-        <p className="text-gray-500 text-sm">
-          Configure your exam and collect the questions you want to include.
-        </p>
-      </header>
+      <Toast ref={toast} />
 
       <main className="flex flex-col gap-6">
         <Card title="Configuration Settings (TO BE DEFINED)">
           <p className="text-gray-600">
             Placeholder: This area is for the <strong>TO BE DEFINED</strong> criteria...
           </p>
+          <br />
+          <p className="text-gray-500 text-sm">
+            Configure your exam and collect the questions you want to include.
+          </p>
         </Card>
 
         <Card title="Collected Questions">
-          <div className="flex flex-col md:flex-row gap-4 mb-4">
-            <Button
-              label="Add New Question"
-              icon="pi pi-plus"
-              className="p-button-primary w-full md:w-auto"
-              onClick={handleAddNewQuestion}
-            />
+          <div className="flex justify-end mb-2">
             <Button
               label="Select Existed Questions"
               icon="pi pi-list"
@@ -107,10 +106,6 @@ export const ExamCreationPage: React.FC = () => {
           </div>
 
           <div className="bg-gray-50 p-4 rounded-lg">
-            <p className="text-gray-600 mb-4">
-              System Requirement: The system must be able to collect all user-submitted questions...
-            </p>
-
             <DataScroller
               value={questions}
               rows={3}
@@ -137,19 +132,17 @@ export const ExamCreationPage: React.FC = () => {
           </div>
         </Card>
 
-        <Card>
-          <div className="flex flex-col items-center gap-3">
-            <Button
-              label="Generate & Download Exam PDF"
-              icon="pi pi-download"
-              className="p-button-success w-full md:w-auto"
-              onClick={handleDownloadPDF}
-            />
-            <p className="text-sm text-gray-500 text-center">
-              The download occurs automatically when this button is clicked.
-            </p>
-          </div>
-        </Card>
+        <div className="flex flex-col items-center gap-3">
+          <Button
+            label="Generate & Download Exam PDF"
+            icon="pi pi-download"
+            className="p-button-success w-full md:w-auto"
+            onClick={handleDownloadPDF}
+          />
+          <p className="text-sm text-gray-500 text-center">
+            The download occurs automatically when this button is clicked.
+          </p>
+        </div>
       </main>
 
       <Dialog
