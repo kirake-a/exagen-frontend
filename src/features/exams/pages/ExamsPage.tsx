@@ -1,27 +1,27 @@
-import { useState, useEffect } from "react";
-import { InputText } from "primereact/inputtext";
-import { Dropdown } from "primereact/dropdown";
-import { Button } from "primereact/button";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import { InputText } from 'primereact/inputtext';
+import { Dropdown } from 'primereact/dropdown';
+import { Button } from 'primereact/button';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { useNavigate } from 'react-router-dom';
 
-interface Exam { // pasar a archivo de tipos y este es mock
+interface Exam {
+  // pasar a archivo de tipos y este es mock
   id: number;
   name: string;
   date: string;
 }
 
 export default function ExamsPage() {
-    
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [status, setStatus] = useState<string | null>(null);
   const [exams, setExams] = useState<Exam[]>([]);
 
   const statusOptions = [
-    { label: "All", value: "all" },
-    { label: "Active", value: "active" },
-    { label: "Inactive", value: "inactive" },
+    { label: 'All', value: 'all' },
+    { label: 'Active', value: 'active' },
+    { label: 'Inactive', value: 'inactive' },
   ];
 
   useEffect(() => {
@@ -29,18 +29,20 @@ export default function ExamsPage() {
   }, [search, status]);
 
   const fetchData = async () => {
-    console.log("Fetching exams with filters:", { search, status });
+    console.log('Fetching exams with filters:', { search, status });
     setExams([
-      { id: 1, name: "Math Exam", date: "2025-11-01" },
-      { id: 2, name: "History Exam", date: "2025-11-10" },
+      { id: 1, name: 'Math Exam', date: '2025-11-01' },
+      { id: 2, name: 'History Exam', date: '2025-11-10' },
     ]);
   };
 
   const handleCreate = () => {
-    navigate('/create-exams')
+    navigate('/create-exams');
   };
 
-  const actionTemplate = (rowData: Exam) => ( //rawData representa cada fila
+  const actionTemplate = (
+    rowData: Exam //rawData representa cada fila
+  ) => (
     <div className="flex gap-2">
       <p>{rowData.name}</p>
       <Button icon="pi pi-eye" rounded text severity="info" tooltip="See" />
@@ -51,38 +53,37 @@ export default function ExamsPage() {
   const navigate = useNavigate();
   return (
     <div className="p-5">
-        <div className="flex align-items-center justify-content-between">
-            <div className="flex align-items-center gap-2">
-                <Button icon="pi pi-arrow-left" text onClick={() => navigate(-1)} />
-                <h2 className="m-0">Exams</h2>
-            </div>
-
-            <Button icon="pi pi-plus" label={`Create Exam`} onClick={handleCreate} />
-        </div>
-        <div className="flex gap-2 mb-3 align-items-center pt-5">
-            <span className="p-input-icon-left grow">
-            
-            <InputText
-                placeholder="Search..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full"
-            />
-            </span>
-            <Dropdown
-            options={statusOptions}
-            value={status}
-            onChange={(e) => setStatus(e.value)}
-            placeholder="Status"
-            className="w-10rem"
-            />
+      <div className="flex align-items-center justify-content-between">
+        <div className="flex align-items-center gap-2">
+          <Button icon="pi pi-arrow-left" text onClick={() => navigate(-1)} />
+          <h2 className="m-0">Exams</h2>
         </div>
 
-        <DataTable value={exams} responsiveLayout="scroll">
-            <Column field="name" header="Exam Name" />
-            <Column field="date" header="Date" />
-            <Column body={actionTemplate} header="Actions" />
-        </DataTable>
-        </div>
+        <Button icon="pi pi-plus" label={`Create Exam`} onClick={handleCreate} />
+      </div>
+      <div className="flex gap-2 mb-3 align-items-center pt-5">
+        <span className="p-input-icon-left grow">
+          <InputText
+            placeholder="Search..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full"
+          />
+        </span>
+        <Dropdown
+          options={statusOptions}
+          value={status}
+          onChange={(e) => setStatus(e.value)}
+          placeholder="Status"
+          className="w-10rem"
+        />
+      </div>
+
+      <DataTable value={exams}>
+        <Column field="name" header="Exam Name" />
+        <Column field="date" header="Date" />
+        <Column body={actionTemplate} header="Actions" />
+      </DataTable>
+    </div>
   );
-};
+}

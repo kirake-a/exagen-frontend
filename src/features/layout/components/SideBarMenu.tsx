@@ -1,18 +1,17 @@
-import React from "react";
-import { Button } from "primereact/button";
-import { Panel } from "primereact/panel";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Button } from 'primereact/button';
+import { Panel } from 'primereact/panel';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function SidebarMenu() {
   const navigate = useNavigate();
   const location = useLocation();
 
   const menuItems = [
-    { label: "Dashboard", icon: "pi pi-home", path: "dashboard" },
-    { label: "Exams", icon: "pi pi-pencil", path: "exams" },
-    { label: "Questions", icon: "pi pi-question", path: "questions" },
-    { label: "Surveys", icon: "pi pi-chart-bar", path: "surveys" },
-    { label: "Users", icon: "pi pi-users", path: "users" },
+    { label: 'Dashboard', icon: 'pi pi-home', path: 'dashboard' },
+    { label: 'Exams', icon: 'pi pi-pencil', path: 'exams' },
+    { label: 'Questions', icon: 'pi pi-question', path: 'questions' },
+    { label: 'Surveys', icon: 'pi pi-chart-bar', path: 'surveys' },
+    { label: 'Users', icon: 'pi pi-users', path: 'users' },
   ];
 
   return (
@@ -27,7 +26,7 @@ export default function SidebarMenu() {
               icon={item.icon}
               onClick={() => navigate(item.path)}
               className={`w-full justify-content-start ${
-                isActive ? "bg-secondary border-primary" : "p-button-outlined"
+                isActive ? 'bg-secondary border-primary' : 'p-button-outlined'
               }`}
             />
           );
@@ -35,4 +34,4 @@ export default function SidebarMenu() {
       </div>
     </Panel>
   );
-};
+}
