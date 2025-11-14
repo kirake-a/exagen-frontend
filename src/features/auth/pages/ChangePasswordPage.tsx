@@ -7,6 +7,8 @@ import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { validatePassword } from '../security/passwordValidator';
 import { OverlayPanel } from 'primereact/overlaypanel';
+import type { PasswordResetRequest } from '../../../common/interfaces/passwordResetInterface';
+import { resetPassword } from '../../../common/api/authService';
 
 interface ChangePasswordFormErrors {
   email?: string;
@@ -16,13 +18,15 @@ interface ChangePasswordFormErrors {
 
 export const ChangePasswordPage = () => {
   const toast = useRef<Toast>(null);
-  const policy = useRef(null);
+  const policy = useRef<OverlayPanel>(null);
 
   const [step, setStep] = useState('email');
   const [email, setEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [errors, setErrors] = useState<ChangePasswordFormErrors>({});
+
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -55,12 +59,13 @@ export const ChangePasswordPage = () => {
       return;
     }
 
+    // simulate sending email for password reset
     setTimeout(() => {
       setStep('password');
     }, 400);
   };
 
-  const handleChangePasswordSubmit = () => {
+  const handleChangePasswordSubmit = async () => {
     if (!newPassword || !confirmNewPassword) {
       showError('Please fill in all password fields.');
       setErrors({
@@ -78,11 +83,32 @@ export const ChangePasswordPage = () => {
       return;
     }
 
-    showSuccess('Password changed successfully.');
+    setLoading(true);
+    setErrors({});
 
-    setTimeout(() => {
-      navigate('/login');
-    }, 1000);
+    try {
+      const requestData: PasswordResetRequest = {
+        email,
+        newPassword,
+        newPasswordConfirm: confirmNewPassword,
+      };
+
+      const response = await resetPassword(requestData);
+
+      if (response.success && response.data) {
+        showSuccess('Password changed successfully.');
+        setTimeout(() => {
+          navigate('/login');
+        }, 1000);
+      } else {
+        showError(response.message || 'Failed to change password. Please try again.');
+      }
+    } catch (error) {
+      showError('An unexpected error occurred. Please try again later.');
+      console.error('Password change error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -116,7 +142,12 @@ export const ChangePasswordPage = () => {
               </FloatLabel>
             </div>
             <div>
-              <Button label="Continue" onClick={handleEmailSubmit} className="pl-10 pr-10 w-full" />
+              <Button
+                label="Continue"
+                onClick={handleEmailSubmit}
+                className="pl-10 pr-10 w-full"
+                loading={loading}
+              />
             </div>
           </article>
         </section>
@@ -142,13 +173,14 @@ export const ChangePasswordPage = () => {
                     toggleMask
                     feedback={false}
                     invalid={!!errors.newPassword}
+                    disabled={loading}
                   />
                   <label htmlFor="new-password">New Password</label>
                 </FloatLabel>
                 <div className="card mt-1">
                   <button
                     className="underline cursor-pointer text-sm text-gray-500 bg-transparent border-none p-0 text-left"
-                    onClick={(e) => policy.current.toggle(e)}
+                    onClick={(e) => policy.current?.toggle(e)}
                   >
                     Password policy
                   </button>
@@ -173,6 +205,7 @@ export const ChangePasswordPage = () => {
                   toggleMask
                   feedback={false}
                   invalid={!!errors.confirmNewPassword}
+                  disabled={loading}
                 />
                 <label htmlFor="new-password-confirm">Confirm New Password</label>
               </FloatLabel>
@@ -182,6 +215,7 @@ export const ChangePasswordPage = () => {
                 label="Change my password"
                 onClick={handleChangePasswordSubmit}
                 className="pl-10 pr-10 w-full"
+                loading={loading}
               />
             </div>
           </article>
