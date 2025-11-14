@@ -7,8 +7,8 @@ import  ExamsPage  from "../../features/exams/pages/ExamsPage";
 import { MainLayout } from "../../features/layout/MainLayout";
 import QuestionsPage from "../../features/questions/pages/QuestionsPage";
 import SurveysPage  from "../../features/surveys/pages/SurveysPage";
-import ExamCreationPage from "../../features/dashboard/pages/ExamCreationPage";
-import AddQuestionPage from "../../features/questions/pages/AddQuestionPage";
+import ExamCreationPage from "../../features/exams/pages/ExamCreationPage";
+import QuestionAdditionPage from "../../features/questions/pages/QuestionAdditionPage";
 
 export const AppRouter = () => {
   return (
@@ -17,9 +17,9 @@ export const AppRouter = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/reset-password" element={<ChangePasswordPage />} />
-        <Route path="/create-exams" element={<ExamCreationPage />} />
-        <Route path="/add-questions" element={<AddQuestionPage />} />
         <Route element={<MainLayout />}>
+          <Route path="/create-exams" element={<ExamCreationPage />} />
+          <Route path="/create-questions" element={<QuestionAdditionPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/exams" element={<ExamsPage />} />
           <Route path="/questions" element={<QuestionsPage />} />

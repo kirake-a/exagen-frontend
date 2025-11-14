@@ -16,7 +16,7 @@ interface QuestionData {
   correctAnswerIndex: number | null;
 }
 
-export const AddQuestionPage: React.FC = () => {
+export const QuestionAdditionPage: React.FC = () => {
   const [questions, setQuestions] = useState<QuestionData[]>([
     {
       questionType: 'closed',
@@ -141,23 +141,31 @@ export const AddQuestionPage: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col min-h-[100dvh] max-w-4xl mx-auto p-6">
+    <div className="p-5">
+      <div className="flex align-items-center justify-content-between">
+        <div className="flex align-items-center gap-2">
+          <Button icon="pi pi-arrow-left" text onClick={() => navigate(-1)} />
+          <h2 className="m-0">Add New Questions</h2>
+        </div>
+      </div>
+
       <Toast ref={toast} />
 
-      <header className="text-center mt-8 mb-6">
-        <h1 className="text-3xl font-semibold mb-2">Add New Question(s)</h1>
-        <p className="text-gray-500 text-sm">
-          You can create one or multiple questions below before saving them.
-        </p>
-      </header>
-
-      <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         {questions.map((q, qIndex) => (
-          <Card
-            key={qIndex}
-            title={`Question ${qIndex + 1}`}
-            className="shadow-md border border-gray-100 relative"
-          >
+          <Card key={qIndex} title={`Question ${qIndex + 1}`}>
+            <div className="flex align-items-center justify-content-between">
+              <p className="text-gray-500 text-sm mb-4">
+                You can create one or multiple questions below before saving them.
+              </p>
+              <Button
+                type="button"
+                icon="pi pi-trash"
+                label="Delete Question"
+                className="p-button-danger"
+                onClick={() => deleteQuestion(qIndex)}
+              />
+            </div>
             <div className="flex flex-col md:flex-row gap-6 mb-4">
               <div className="flex items-center gap-2">
                 <RadioButton
@@ -198,33 +206,14 @@ export const AddQuestionPage: React.FC = () => {
             />
 
             {q.questionType === 'closed' && renderAnswerFields(qIndex, q)}
-
-            <div className="flex justify-end mt-5">
-              <Button
-                type="button"
-                icon="pi pi-trash"
-                label="Delete Question"
-                className="p-button-danger"
-                onClick={() => deleteQuestion(qIndex)}
-              />
-            </div>
           </Card>
         ))}
 
-        <div className="flex justify-center">
-          <Button
-            type="button"
-            label="Add Another Question"
-            icon="pi pi-plus"
-            className="p-button-info px-5"
-            onClick={addNewQuestionForm}
-          />
-        </div>
-
-        <div className="flex justify-center mt-4">
+        <div className="flex justify-center gap-4 mt-4">
+          <Button icon="pi pi-plus" label={`Add Another Question`} onClick={addNewQuestionForm} />
           <Button
             type="submit"
-            label="Save All Questions"
+            label={`Save All Questions`}
             icon="pi pi-save"
             className="p-button-success px-6"
           />
@@ -234,4 +223,4 @@ export const AddQuestionPage: React.FC = () => {
   );
 };
 
-export default AddQuestionPage;
+export default QuestionAdditionPage;
