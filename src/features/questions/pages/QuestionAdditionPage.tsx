@@ -7,14 +7,7 @@ import { RadioButton } from 'primereact/radiobutton';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 
-type QuestionType = 'open' | 'closed';
-
-interface QuestionData {
-  questionType: QuestionType;
-  questionText: string;
-  answers: string[];
-  correctAnswerIndex: number | null;
-}
+import type { QuestionData } from '../../../common/types/questionForm';
 
 export const QuestionAdditionPage: React.FC = () => {
   const [questions, setQuestions] = useState<QuestionData[]>([
@@ -37,16 +30,32 @@ export const QuestionAdditionPage: React.FC = () => {
     toast.current?.show({ severity, summary, detail, life: 3000 });
   };
 
-  const handleQuestionChange = (index: number, field: keyof QuestionData, value: any) => {
-    const updated = [...questions];
-    (updated[index] as any)[field] = value;
-    setQuestions(updated);
+  const handleQuestionChange = <K extends keyof QuestionData>(
+    index: number,
+    field: K,
+    value: QuestionData[K]
+  ) => {
+    setQuestions((prev) => {
+      const updated = [...prev];
+      updated[index] = {
+        ...updated[index],
+        [field]: value,
+      };
+      return updated;
+    });
   };
 
   const handleAnswerChange = (qIndex: number, aIndex: number, value: string) => {
-    const updated = [...questions];
-    updated[qIndex].answers[aIndex] = value;
-    setQuestions(updated);
+    setQuestions((prev) => {
+      const updated = [...prev];
+      const q = updated[qIndex];
+
+      const newAnswers = [...q.answers];
+      newAnswers[aIndex] = value;
+
+      updated[qIndex] = { ...q, answers: newAnswers };
+      return updated;
+    });
   };
 
   const addNewQuestionForm = () => {
@@ -140,6 +149,23 @@ export const QuestionAdditionPage: React.FC = () => {
     </div>
   );
 
+  const renderOpenAnswerField = (qIndex: number, q: QuestionData) => (
+    <div className="flex flex-col gap-2">
+      <h3 className="text-lg font-medium">Open-Ended Answer</h3>
+
+      <InputTextarea
+        value={q.answers[0] ?? ''}
+        onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+          handleAnswerChange(qIndex, 0, e.target.value)
+        }
+        rows={3}
+        className="w-full"
+        placeholder="Write the expected answer..."
+      />
+      <p className="text-sm text-gray-500">The respondent will write the answer freely.</p>
+    </div>
+  );
+
   return (
     <div className="p-5">
       <div className="flex align-items-center justify-content-between">
@@ -201,11 +227,12 @@ export const QuestionAdditionPage: React.FC = () => {
               }
               rows={4}
               className="w-full mb-4"
-              placeholder="Enter the question text..."
+              placeholder="Enter the question texts..."
               required
             />
 
             {q.questionType === 'closed' && renderAnswerFields(qIndex, q)}
+            {q.questionType === 'open' && renderOpenAnswerField(qIndex, q)}
           </Card>
         ))}
 

@@ -9,7 +9,14 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { DataScroller } from 'primereact/datascroller';
 
-const questions = [
+import type { SelectableQuestion } from '../../../common/types/selectedQuestion';
+import type { QuestionStatus } from '../../../common/types/questionStatus';
+
+const collectedQuestions: Array<{
+  id: number;
+  text: string;
+  status: QuestionStatus;
+}> = [
   { id: 1, text: 'Question 1 (Meets Criteria)', status: 'Approved' },
   { id: 2, text: 'Question 2 (Pending Review)', status: 'Pending' },
   { id: 3, text: 'Question 3 (Requires Edits)', status: 'Needs Revision' },
@@ -20,11 +27,11 @@ export const ExamCreationPage: React.FC = () => {
   const navigate = useNavigate();
   const toast = useRef<Toast>(null);
 
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
   const [categoryFilter, setCategoryFilter] = useState<number | null>(null);
-  const [typeFilter, setTypeFilter] = useState<string | null>(null);
+  const [typeFilter, setTypeFilter] = useState<'open' | 'closed' | null>(null);
 
-  const showInfo = (summary: string, detail: string) => {
+  const showInfo = (summary: string, detail: string): void => {
     toast.current?.show({ severity: 'info', summary, detail, life: 2500 });
   };
 
@@ -35,7 +42,6 @@ export const ExamCreationPage: React.FC = () => {
 
   const handleAddNewQuestion = (): void => {
     showInfo('Navigate', 'Navigate to the “Add Questions” page');
-    console.log('Action: Add New Question');
     navigate('/create-questions');
   };
 
@@ -44,7 +50,7 @@ export const ExamCreationPage: React.FC = () => {
     setShowModal(true);
   };
 
-  const allQuestions = [
+  const allQuestions: SelectableQuestion[] = [
     { id: 1, text: 'What is React?', category: 1, type: 'open' },
     { id: 2, text: 'Select correct answer about Tailwind.', category: 2, type: 'closed' },
     { id: 3, text: 'Explain useState hook.', category: 1, type: 'open' },
@@ -52,13 +58,13 @@ export const ExamCreationPage: React.FC = () => {
     { id: 5, text: 'Describe component lifecycle.', category: 4, type: 'open' },
   ];
 
-  const filteredQuestions = allQuestions.filter((q) => {
-    const matchCategory = categoryFilter ? q.category === categoryFilter : true;
-    const matchType = typeFilter ? q.type === typeFilter : true;
-    return matchCategory && matchType;
+  const filteredQuestions: SelectableQuestion[] = allQuestions.filter((q) => {
+    const matchesCategory = categoryFilter === null || q.category === categoryFilter;
+    const matchesType = typeFilter === null || q.type === typeFilter;
+    return matchesCategory && matchesType;
   });
 
-  const categoryOptions = [
+  const categoryOptions: { label: string; value: number | null }[] = [
     { label: 'All Categories', value: null },
     { label: 'Category 1', value: 1 },
     { label: 'Category 2', value: 2 },
@@ -66,7 +72,7 @@ export const ExamCreationPage: React.FC = () => {
     { label: 'Category 4', value: 4 },
   ];
 
-  const typeOptions = [
+  const typeOptions: { label: string; value: 'open' | 'closed' | null }[] = [
     { label: 'All Types', value: null },
     { label: 'Open', value: 'open' },
     { label: 'Closed', value: 'closed' },
@@ -75,11 +81,11 @@ export const ExamCreationPage: React.FC = () => {
   return (
     <div className="p-5">
       <div className="flex align-items-center justify-content-between">
-        <div className="flex align-items-center gap-2">
+        <div className="flex align-items-center gap-2 mb-4">
           <Button icon="pi pi-arrow-left" text onClick={() => navigate(-1)} />
           <h2 className="m-0">Create New Exam</h2>
         </div>
-        <Button icon="pi pi-plus" label={`Add Question`} onClick={handleAddNewQuestion} />
+        <Button icon="pi pi-plus" label="Add Question" onClick={handleAddNewQuestion} />
       </div>
 
       <Toast ref={toast} />
@@ -89,8 +95,7 @@ export const ExamCreationPage: React.FC = () => {
           <p className="text-gray-600">
             Placeholder: This area is for the <strong>TO BE DEFINED</strong> criteria...
           </p>
-          <br />
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-500 text-sm mt-2">
             Configure your exam and collect the questions you want to include.
           </p>
         </Card>
@@ -107,7 +112,7 @@ export const ExamCreationPage: React.FC = () => {
 
           <div className="bg-gray-50 p-4 rounded-lg">
             <DataScroller
-              value={questions}
+              value={collectedQuestions}
               rows={3}
               inline
               scrollHeight="250px"
@@ -184,13 +189,12 @@ export const ExamCreationPage: React.FC = () => {
           <Column
             header="Select"
             style={{ width: '20%' }}
-            body={(rowData) => (
+            body={(rowData: SelectableQuestion) => (
               <Button
                 label="Select"
                 icon="pi pi-check"
                 className="p-button-sm p-button-success"
                 onClick={() => {
-                  console.log(`Selected question: ${rowData.text}`);
                   toast.current?.show({
                     severity: 'info',
                     summary: 'Question Selected',

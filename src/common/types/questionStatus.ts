@@ -1,0 +1,1 @@
+export type QuestionStatus = 'Approved' | 'Pending' | 'Needs Revision' | 'Draft';
