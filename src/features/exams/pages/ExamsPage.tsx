@@ -5,12 +5,8 @@ import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { useNavigate } from "react-router-dom";
+import type { Exam } from "../../../common/types/exam";
 
-interface Exam { // pasar a archivo de tipos y este es mock
-  id: number;
-  name: string;
-  date: string;
-}
 
 export default function ExamsPage() {
     
@@ -31,8 +27,18 @@ export default function ExamsPage() {
   const fetchData = async () => {
     console.log("Fetching exams with filters:", { search, status });
     setExams([
-      { id: 1, name: "Math Exam", date: "2025-11-01" },
-      { id: 2, name: "History Exam", date: "2025-11-10" },
+      {
+        id: 1, title: "Math Exam", dateCreated: "2025-11-01",
+        dateModified: "",
+        openQuestions: [],
+        closedQuestions: []
+      },
+      {
+        id: 2, title: "History Exam", dateCreated: "2025-11-10",
+        dateModified: "",
+        openQuestions: [],
+        closedQuestions: []
+      },
     ]);
   };
 
@@ -42,7 +48,7 @@ export default function ExamsPage() {
 
   const actionTemplate = (rowData: Exam) => ( //rawData representa cada fila
     <div className="flex gap-2">
-      <p>{rowData.name}</p>
+      <p>{rowData.title}</p>
       <Button icon="pi pi-eye" rounded text severity="info" tooltip="See" />
       <Button icon="pi pi-pencil" rounded text severity="warning" tooltip="Edit" />
       <Button icon="pi pi-trash" rounded text severity="danger" tooltip="Delete" />

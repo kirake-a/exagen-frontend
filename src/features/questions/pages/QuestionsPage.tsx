@@ -5,18 +5,13 @@ import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { useNavigate } from "react-router-dom";
-
-interface Question {
-  id: number;
-  name: string;
-  date: string;
-}
+import type { OpenQuestion } from "../../../common/types/openQuestion";
 
 export default function QuestionsPage() {
     
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<string | null>(null);
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState<OpenQuestion[]>([]);
 
   const statusOptions = [
     { label: "All", value: "all" },
@@ -31,8 +26,18 @@ export default function QuestionsPage() {
   const fetchData = async () => {
     console.log("Fetching questions with filters:", { search, status });
     setQuestions([
-      { id: 1, name: "Math Question", date: "2025-11-01" },
-      { id: 2, name: "History Question", date: "2025-11-10" },
+      {
+        id: 1, statement: "Math Question", dateCreated: "2025-11-01",
+        dateModified: "",
+        answer: "",
+        category_id: 1
+      },
+      {
+        id: 2, statement: "History Question", dateCreated: "2025-11-10",
+        dateModified: "",
+        answer: "",
+        category_id: 1
+      },
     ]);
   };
 
@@ -40,9 +45,9 @@ export default function QuestionsPage() {
     navigate('/create-questions')
   };
 
-  const actionTemplate = (rowData: Question) => ( 
+  const actionTemplate = (rowData: OpenQuestion) => ( 
     <div className="flex gap-2">
-      <p>{rowData.name}</p>
+      <p>{rowData.statement}</p>
       <Button icon="pi pi-eye" rounded text severity="info" tooltip="See" />
       <Button icon="pi pi-pencil" rounded text severity="warning" tooltip="Edit" />
       <Button icon="pi pi-trash" rounded text severity="danger" tooltip="Delete" />
