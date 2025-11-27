@@ -1,11 +1,11 @@
 import axios from 'axios';
-import apiClient from '../config/axiosConfig';
 import type { ResponseWrapper } from '../interfaces/responseWrapper';
 import type { UserResponse } from '../interfaces/userInterfaces';
+import authApiClient from '../config/auth/authPublicApiConfig';
 
 export const getMe = async (): Promise<ResponseWrapper<UserResponse>> => {
   try {
-    const response = await apiClient.get<ResponseWrapper<UserResponse>>('users/me');
+    const response = await authApiClient.get<ResponseWrapper<UserResponse>>('users/me');
 
     return response.data;
   } catch (error) {

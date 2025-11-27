@@ -1,8 +1,24 @@
-import type { QuestionType } from '../../common/types/questionForm';
+export interface QuestionResponse { 
+  closedQuestions: ClosedQuestion[],
+  openQuestions: OpenQuestion[]
+}
 
-export interface QuestionData {
-  questionType: QuestionType;
-  questionText: string;
-  answers: string[];
-  correctAnswerIndex: number | null;
+export interface QuestionRequest {
+  categoryId: number, 
+  questions : {
+    closedQuestions: ClosedQuestion[],
+    openQuestions: OpenQuestion[]
+  }
+}
+export interface OpenQuestion {
+  id?: number, 
+  statement: string,
+  response: string
+}
+
+export interface ClosedQuestion {
+  id?: number, 
+  statement: string, 
+  options: string[],
+  correctAnswer: string
 }

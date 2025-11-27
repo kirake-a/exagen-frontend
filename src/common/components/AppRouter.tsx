@@ -11,25 +11,31 @@ import ExamCreationPage from '../../features/exams/pages/ExamCreationPage';
 import QuestionAdditionPage from '../../features/questions/pages/QuestionAdditionPage';
 import SurveyCreationPage from '../../features/surveys/pages/SurveyCreationPage';
 import SurveyResponsePage from '../../features/surveys/pages/SurveyResponsePage';
+import { AuthProvider } from '../../context/AuthProvider';
+import { ProtectedRoute } from './ProtectedRoute';
 
 export const AppRouter = () => {
   return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/reset-password" element={<ChangePasswordPage />} />
-      <Route element={<MainLayout />}>
-        <Route path="/create-exams" element={<ExamCreationPage />} />
-        <Route path="/create-questions" element={<QuestionAdditionPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/exams" element={<ExamsPage />} />
-        <Route path="/questions" element={<QuestionsPage />} />
-        <Route path="/surveys" element={<SurveysPage />} />
-        <Route path="/create-surveys" element={<SurveyCreationPage />} />
+    <AuthProvider>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/reset-password" element={<ChangePasswordPage />} />
+        <Route element={<ProtectedRoute />}>
+          <Route element={<MainLayout />}>
+            <Route path="/create-exams" element={<ExamCreationPage />} />
+            <Route path="/create-questions" element={<QuestionAdditionPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/exams" element={<ExamsPage />} />
+            <Route path="/questions" element={<QuestionsPage />} />
+            <Route path="/surveys" element={<SurveysPage />} />
+            <Route path="/create-surveys" element={<SurveyCreationPage />} />
+          </Route>
+        </Route>
         <Route path="/respond-surveys" element={<SurveyResponsePage />} />{' '}
-        {/*agregar surveyId a la ruta*/}
-      </Route>
-      <Route path="/" element={<LoginPage />} />
-    </Routes>
+          {/*agregar surveyId a la ruta*/}
+        <Route path="/" element={<LoginPage />} />
+      </Routes>
+    </AuthProvider>
   );
 };

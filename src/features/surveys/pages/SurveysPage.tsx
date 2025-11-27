@@ -40,9 +40,8 @@ export default function SurveysPage() {
     navigate('/create-surveys')
   };
 
-  const actionTemplate = (rowData: Survey) => ( 
+  const actionTemplate = () => ( //rowData: Survey - rawData representa cada fila
     <div className="flex gap-2">
-      <p>{rowData.name}</p>
       <Button icon="pi pi-eye" rounded text severity="info" tooltip="See" />
       <Button icon="pi pi-pencil" rounded text severity="warning" tooltip="Edit" />
       <Button icon="pi pi-trash" rounded text severity="danger" tooltip="Delete" />

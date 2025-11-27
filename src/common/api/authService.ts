@@ -8,14 +8,14 @@ import type {
   SignUpResponse,
 } from '../interfaces/signUpInterfaces';
 import type { ResponseWrapper } from '../interfaces/responseWrapper';
-import apiClient from '../config/axiosConfig';
 import type { PasswordResetRequest, PasswordResetResponse } from '../interfaces/passwordResetInterface';
+import authApiPublicClient from '../config/auth/authPublicApiConfig';
 
 export const registerUser = async (
   userData: SignUpRequest
 ): Promise<ResponseWrapper<SignUpResponse>> => {
   try {
-    const response = await apiClient.post<ResponseWrapper<SignUpResponse>>(
+    const response = await authApiPublicClient.post<ResponseWrapper<SignUpResponse>>(
       '/auth/signup',
       userData
     );
@@ -34,7 +34,7 @@ export const loginUser = async (
   userData: LoginRequest
 ): Promise<ResponseWrapper<LoginResponse>> => {
   try {
-    const response = await apiClient.post<ResponseWrapper<LoginResponse>>(
+    const response = await authApiPublicClient.post<ResponseWrapper<LoginResponse>>(
       '/auth/login',
       userData
     );
@@ -53,7 +53,7 @@ export const resetPassword = async (
   userData: PasswordResetRequest
 ): Promise<ResponseWrapper<PasswordResetResponse>> => {
   try {
-    const response = await apiClient.post<ResponseWrapper<PasswordResetResponse>>(
+    const response = await authApiPublicClient.post<ResponseWrapper<PasswordResetResponse>>(
       '/auth/password-reset',
       userData
     );
@@ -71,10 +71,10 @@ export const resetPassword = async (
 export const saveAuthToken = (token: string) => {
   localStorage.setItem('authToken', token);
 
-  apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  authApiPublicClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 };
 
 export const removeAuthToken = () => {
   localStorage.removeItem('authToken');
-  delete apiClient.defaults.headers.common['Authorization'];
+  delete authApiPublicClient.defaults.headers.common['Authorization'];
 };

@@ -28,13 +28,17 @@ export default function ExamsPage() {
     console.log("Fetching exams with filters:", { search, status });
     setExams([
       {
-        id: 1, title: "Math Exam", dateCreated: "2025-11-01",
+        id: 1, 
+        title: "Math Exam", 
+        dateCreated: "2025-11-01",
         dateModified: "",
         openQuestions: [],
         closedQuestions: []
       },
       {
-        id: 2, title: "History Exam", dateCreated: "2025-11-10",
+        id: 2, 
+        title: "History Exam", 
+        dateCreated: "2025-11-10",
         dateModified: "",
         openQuestions: [],
         closedQuestions: []
@@ -46,9 +50,8 @@ export default function ExamsPage() {
     navigate('/create-exams')
   };
 
-  const actionTemplate = (rowData: Exam) => ( //rawData representa cada fila
+  const actionTemplate = () => ( //rowData: Exam - rawData representa cada fila
     <div className="flex gap-2">
-      <p>{rowData.title}</p>
       <Button icon="pi pi-eye" rounded text severity="info" tooltip="See" />
       <Button icon="pi pi-pencil" rounded text severity="warning" tooltip="Edit" />
       <Button icon="pi pi-trash" rounded text severity="danger" tooltip="Delete" />
@@ -85,8 +88,8 @@ export default function ExamsPage() {
         </div>
 
         <DataTable value={exams} responsiveLayout="scroll">
-            <Column field="name" header="Exam Name" />
-            <Column field="date" header="Date" />
+            <Column field="title" header="Exam Name" />
+            <Column field="dateCreated" header="Date Created" />
             <Column body={actionTemplate} header="Actions" />
         </DataTable>
         </div>

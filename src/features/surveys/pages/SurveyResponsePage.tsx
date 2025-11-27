@@ -3,7 +3,6 @@ import { Card } from 'primereact/card';
 import { RadioButton } from 'primereact/radiobutton';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Button } from 'primereact/button';
-import { useNavigate } from 'react-router-dom';
 
 const SurveyResponsePage: React.FC = () => {
   const [answers, setAnswers] = useState<{ [key: string]: string }>({});
@@ -35,17 +34,8 @@ const SurveyResponsePage: React.FC = () => {
     setSubmitted(true);
   };
 
-  const navigate = useNavigate();
-
   return (
     <div className="p-5">
-      <div className="flex align-items-center justify-content-between">
-        <div className="flex align-items-center gap-2">
-          <Button icon="pi pi-arrow-left" text onClick={() => navigate(-1)} />
-          <h2 className="m-0">Respond Survey</h2>
-        </div>
-      </div>
-
       <Card title={quiz.title}>
         {submitted ? (
           <p className="text-green-600 font-semibold text-center">

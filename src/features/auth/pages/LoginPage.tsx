@@ -11,6 +11,7 @@ import { Toast } from 'primereact/toast';
 import { Footer } from '../components/Footer';
 import type { LoginRequest } from '../../../common/interfaces/logInInterfaces';
 import { loginUser, saveAuthToken } from '../../../common/api/authService';
+import { useAuth } from '../../../hooks/useAuth';
 
 interface LoginFormErrors {
   username?: string;
@@ -27,7 +28,8 @@ export const LoginPage = () => {
 
   const toast = useRef<Toast>(null);
   const navigate = useNavigate();
-
+  const { refreshUser } = useAuth();
+  
   const showError = (message: string) => {
     toast.current?.show({
       severity: 'error',
@@ -99,6 +101,7 @@ export const LoginPage = () => {
 
         if (response.success && response.data.token) {
           saveAuthToken(response.data.token);
+          await refreshUser();
           showSuccess('You have logged in successfully.');
 
           setTimeout(() => {

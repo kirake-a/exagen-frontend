@@ -1,36 +1,16 @@
-import { useEffect, useState } from 'react';
-import { getMe } from '../../../common/api/userService';
-import type { UserResponse } from '../../../common/interfaces/userInterfaces';
+import { useAuth } from '../../../hooks/useAuth';
 import { RecentExams } from '../components/RecentExams';
 import { RecentSurveys } from '../components/RecentSurveys';
 export const DashboardPage = () => {
-  const [user, setUser] = useState<UserResponse | null>(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await getMe();
-
-        if (response.success && response.data) {
-          setUser(response.data);
-        } else {
-          console.error('Failed to fetch user:', response.message);
-        }
-      } catch (error) {
-        console.error('Error fetching user:', error);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
+  const { user } = useAuth();
   return (
+    
     <div>
      {/* {user ?  */}
         <div className="flex flex-column md:flex-row h-screen surface-ground">
         <div className="flex flex-column w-full md:w-9/12 p-4 overflow-auto">
           <h2 className="mb-4 text-center md:text-left">
-            Welcome Back Loba AWuu, {user?.name} 
+            Welcome Back, {user?.name} 
           </h2>
 
           <div className="flex flex-column gap-4">

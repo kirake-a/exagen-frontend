@@ -1,6 +1,6 @@
 export type QuestionType = 'open' | 'closed';
 
-export interface QuestionData {
+export interface Question {
   questionType: QuestionType;
   questionText: string;
 
