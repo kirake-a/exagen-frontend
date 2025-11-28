@@ -7,8 +7,8 @@ import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
 import { Link, useNavigate } from 'react-router';
 import { validatePassword } from '../security/passwordValidator';
-import { registerUser } from '../api/authService';
-import type { SignUpRequest } from '../interfaces/signUpInterfaces';
+import { registerUser } from '../../../common/api/authService';
+import type { SignUpRequest } from '../../../common/interfaces/signUpInterfaces';
 
 interface RegisterFormErrors {
   name?: string;

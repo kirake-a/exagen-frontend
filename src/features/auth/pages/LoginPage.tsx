@@ -9,8 +9,9 @@ import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 
 import { Footer } from '../components/Footer';
-import type { LoginRequest } from '../interfaces/logInInterfaces';
-import { loginUser, saveAuthToken } from '../api/authService';
+import type { LoginRequest } from '../../../common/interfaces/logInInterfaces';
+import { loginUser, saveAuthToken } from '../../../common/api/authService';
+import { useAuth } from '../../../hooks/useAuth';
 
 interface LoginFormErrors {
   username?: string;
@@ -27,7 +28,8 @@ export const LoginPage = () => {
 
   const toast = useRef<Toast>(null);
   const navigate = useNavigate();
-
+  const { refreshUser } = useAuth();
+  
   const showError = (message: string) => {
     toast.current?.show({
       severity: 'error',
@@ -64,7 +66,7 @@ export const LoginPage = () => {
 
   const isEmail = (input: string): boolean => {
     return input.includes('@');
-  }
+  };
 
   const validateForm = (): LoginFormErrors => {
     const { username, password } = formData;
@@ -76,7 +78,7 @@ export const LoginPage = () => {
     setErrors(newErrors);
 
     return newErrors;
-  }
+  };
 
   const handleLogin = async () => {
     const detectedErrors = validateForm();
@@ -99,17 +101,18 @@ export const LoginPage = () => {
 
         if (response.success && response.data.token) {
           saveAuthToken(response.data.token);
+          await refreshUser();
           showSuccess('You have logged in successfully.');
 
           setTimeout(() => {
             navigate('/dashboard');
-          }, 1000)
-        } else{
+          }, 1000);
+        } else {
           showError(response.message || 'Login failed. Please try again.');
         }
       } catch (error) {
-          showError('An error occurred during login. Please try again later.');
-          console.error('Login error:', error);
+        showError('An error occurred during login. Please try again later.');
+        console.error('Login error:', error);
       } finally {
         setIsLoading(false);
       }
@@ -128,7 +131,7 @@ export const LoginPage = () => {
 
         <article
           id="login-form-container"
-          className="mx-auto w-full max-w-sm mb-4 mt-5 gap-5 flex flex-column"
+          className="mx-auto w-full max-w-sm mb-3 mt-5 gap-5 flex flex-column"
         >
           <FloatLabel>
             <InputText
@@ -154,13 +157,18 @@ export const LoginPage = () => {
             <label htmlFor="password">Password</label>
           </FloatLabel>
           <div className="flex justify-center">
-            <Button label="Login" onClick={handleLogin} className="pl-10 pr-10 w-full" loading={isLoading} />
+            <Button
+              label="Login"
+              onClick={handleLogin}
+              className="pl-10 pr-10 w-full"
+              loading={isLoading}
+            />
           </div>
         </article>
 
-        <article className="mx-auto">
+        <article className="mx-auto w-full max-w-sm mb-4 mt-1 gap-5 flex flex-column">
           <Link to="/reset-password">
-            <p className="underline">You forgot your password?</p>
+            <p className="underline p-0 flex justify-start">You forgot your password?</p>
           </Link>
         </article>
       </section>
