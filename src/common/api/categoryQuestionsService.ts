@@ -1,5 +1,5 @@
 import axios from 'axios';
-import exagenApiClient from '../config/exagenApiConfig';
+import exagenApiClient from '../config/exagen/exagenApiConfig';
 import type { ResponseWrapper } from '../interfaces/responseWrapper';
 import type { Category } from '../interfaces/categoryInterface';
 

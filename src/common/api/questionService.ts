@@ -1,9 +1,9 @@
 import axios from 'axios';
-import exagenApiClient from '../config/exagenApiConfig';
+import exagenApiClient from '../config/exagen/exagenApiConfig';
 import type { ResponseWrapper } from '../interfaces/responseWrapper';
 import type { QuestionRequest, QuestionResponse } from '../interfaces/questionInterface';
-import type { ClosedQuestion } from '../types/closedQuestion';
-import type { OpenQuestion } from '../types/openQuestion';
+import type { ClosedQuestion, OpenQuestion } from '../interfaces/questionInterface';
+import type { Test } from '../interfaces/testInterface';
 
 
 export const getQuestions = async (): Promise<ResponseWrapper<QuestionResponse>> => {
@@ -30,9 +30,9 @@ export const createQuestion = async (questionData: QuestionRequest): Promise<Res
     }
 }
 
-export const deleteQuestion = async (id: string): Promise<ResponseWrapper<null>> => {
+export const deleteQuestion = async (id: string, type:"OPEN"|"CLOSED"): Promise<ResponseWrapper<null>> => {
     try {
-        const response = await exagenApiClient.delete<ResponseWrapper<null>>(`/questions/${id}`);
+        const response = await exagenApiClient.delete<ResponseWrapper<null>>(`/questions/${id}?type=${type}`);
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
@@ -64,4 +64,39 @@ export const getOpenQuestionById = async (id: string): Promise<ResponseWrapper<O
         }
         throw new Error('An unexpected error occurred while fetching the question.');
     }
+};
+
+export interface QuestionData {
+  closedQuestions: ClosedQuestion[];
+  openQuestions: OpenQuestion[];
+}
+
+export const getAllQuestionsForTest = async (
+  test: Test
+): Promise<QuestionData> => {
+  try {
+    const closedQuestionPromises = test.closedQuestionIds.map((id) =>
+      getClosedQuestionById(id.toString())
+    );
+    const openQuestionPromises = test.openQuestionIds.map((id) =>
+      getOpenQuestionById(id.toString())
+    );
+
+    const [closedResults, openResults] = await Promise.all([
+      Promise.all(closedQuestionPromises),
+      Promise.all(openQuestionPromises),
+    ]);
+
+    const closedQuestions = closedResults
+      .filter((res) => res.success)
+      .map((res) => res.data as ClosedQuestion);
+    const openQuestions = openResults
+      .filter((res) => res.success)
+      .map((res) => res.data as OpenQuestion);
+
+    return { closedQuestions, openQuestions };
+  } catch (error) {
+    console.error("Error fetching all questions for test:", error);
+    return { closedQuestions: [], openQuestions: [] };
+  }
 };

@@ -6,34 +6,45 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 
-import type { SelectableQuestion } from '../../../common/types/selectedQuestion';
+import { useQuestions } from '../../../hooks/useQuestion';
 
 type Props = {
   visible: boolean;
   onHide: () => void;
+  onSelect: (questionId: number, type: 'open' | 'closed') => void;
 };
 
-export const QuestionSelectorDialog: React.FC<Props> = ({ visible, onHide }) => {
+export const QuestionSelectorDialog: React.FC<Props> = ({ visible, onHide, onSelect }) => {
   const toast = useRef<Toast>(null);
+
+  const { questions, loading } = useQuestions();
+
   const [categoryFilter, setCategoryFilter] = useState<number | null>(null);
   const [typeFilter, setTypeFilter] = useState<'open' | 'closed' | null>(null);
 
-  const allQuestions: SelectableQuestion[] = [
-    { id: 1, text: 'What is React?', category: 1, type: 'open' },
-    { id: 2, text: 'Tailwind question', category: 2, type: 'closed' },
-    { id: 3, text: 'useState hook', category: 1, type: 'open' },
+  const allQuestions = [
+    ...(questions?.openQuestions ?? []).map((q) => ({
+      ...q,
+      type: 'open' as const,
+    })),
+    ...(questions?.closedQuestions ?? []).map((q) => ({
+      ...q,
+      type: 'closed' as const,
+    })),
   ];
-
   const filtered = allQuestions.filter((q) => {
-    const cat = categoryFilter === null || q.category === categoryFilter;
+    const cat = categoryFilter === null || q.categoryId === categoryFilter;
     const type = typeFilter === null || q.type === typeFilter;
     return cat && type;
   });
 
+
   const categoryOptions = [
     { label: 'All Categories', value: null },
-    { label: 'Category 1', value: 1 },
-    { label: 'Category 2', value: 2 },
+    ...Array.from(new Set(allQuestions.map((q) => q.categoryId))).map((cat) => ({
+      label: `Category ${cat}`,
+      value: cat,
+    })),
   ];
 
   const typeOptions = [
@@ -71,11 +82,18 @@ export const QuestionSelectorDialog: React.FC<Props> = ({ visible, onHide }) => 
         />
       </div>
 
-      <DataTable value={filtered} paginator rows={5} emptyMessage="No questions found.">
+      <DataTable
+        value={filtered}
+        paginator
+        rows={5}
+        loading={loading}
+        emptyMessage="No questions found."
+      >
         <Column field="id" header="ID" />
-        <Column field="text" header="Question" />
-        <Column field="category" header="Category" />
+        <Column field="statement" header="Question" />
+        <Column field="categoryId" header="Category" />
         <Column field="type" header="Type" />
+
         <Column
           header="Select"
           body={(row) => (
@@ -83,14 +101,16 @@ export const QuestionSelectorDialog: React.FC<Props> = ({ visible, onHide }) => 
               label="Select"
               icon="pi pi-check"
               className="p-button-sm p-button-success"
-              onClick={() =>
+              onClick={() => {
+                onSelect(row.id, row.type);
+
                 toast.current?.show({
-                  severity: 'info',
-                  summary: 'Question Selected',
-                  detail: row.text,
+                  severity: 'success',
+                  summary: 'Question Added',
+                  detail: row.statement,
                   life: 2000,
-                })
-              }
+                });
+              }}
             />
           )}
         />

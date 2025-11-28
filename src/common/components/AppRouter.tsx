@@ -11,8 +11,10 @@ import ExamCreationPage from '../../features/exams/pages/ExamCreationPage';
 import QuestionAdditionPage from '../../features/questions/pages/QuestionAdditionPage';
 import SurveyCreationPage from '../../features/surveys/pages/SurveyCreationPage';
 import SurveyResponsePage from '../../features/surveys/pages/SurveyResponsePage';
+import ResponseSummaryPage from '../../features/surveys/pages/ResponseSummaryPage';
 import { AuthProvider } from '../../context/AuthProvider';
 import { ProtectedRoute } from './ProtectedRoute';
+
 
 export const AppRouter = () => {
   return (
@@ -29,12 +31,13 @@ export const AppRouter = () => {
             <Route path="/exams" element={<ExamsPage />} />
             <Route path="/questions" element={<QuestionsPage />} />
             <Route path="/surveys" element={<SurveysPage />} />
+            <Route path="/surveys-summary/:id" element={<ResponseSummaryPage />} />
             <Route path="/create-surveys" element={<SurveyCreationPage />} />
           </Route>
         </Route>
-        <Route path="/respond-surveys" element={<SurveyResponsePage />} />{' '}
+        <Route path="/respond-surveys/:id" element={<SurveyResponsePage />} />{' '}
           {/*agregar surveyId a la ruta*/}
-        <Route path="/" element={<LoginPage />} />
+        <Route path="/" element={<DashboardPage />} />
       </Routes>
     </AuthProvider>
   );

@@ -8,16 +8,17 @@ import { Dialog } from "primereact/dialog";
 import { Tag } from "primereact/tag";
 import { useNavigate } from "react-router-dom";
 import { useQuestions } from "../../../hooks/useQuestion";
+import { deleteQuestion } from "../../../common/api/questionService";
 
 export default function QuestionsPage() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<string | null>(null);
 
   const [viewData, setViewData] = useState<any>(null);
-  const [deleteData, setDeleteData] = useState<any>(null);
+
 
   const navigate = useNavigate();
-  const { questions } = useQuestions();
+  const { questions, fetchQuestions } = useQuestions();
 
   const statusOptions = [
     { label: "All", value: "all" },
@@ -31,13 +32,13 @@ export default function QuestionsPage() {
     const closed =
       questions.closedQuestions?.map((q) => ({
         ...q,
-        type: "closed",
+        type: "CLOSED",
       })) || [];
 
     const open =
       questions.openQuestions?.map((q) => ({
         ...q,
-        type: "open",
+        type: "OPEN",
       })) || [];
 
     return [...closed, ...open];
@@ -59,10 +60,14 @@ export default function QuestionsPage() {
 
   const handleCreate = () => navigate("/create-questions");
 
-  const handleDelete = (row: any) => {
-    console.log("Eliminando pregunta:", row);
-    // Aquí iría el fetch DELETE real
-    setDeleteData(null);
+  const handleDelete = async (id:number,type:"OPEN"|"CLOSED") => {
+    const confirmed = confirm("Are you sure you want to delete this question?")
+    if (!confirmed) return;
+
+    const res = await deleteQuestion(String(id), type);
+    if(res.success){
+      fetchQuestions();
+    }
   };
 
   const actionTemplate = (rowData: any) => (
@@ -81,7 +86,7 @@ export default function QuestionsPage() {
         text
         severity="danger"
         tooltip="Delete"
-        onClick={() => setDeleteData(rowData)}
+        onClick={() => handleDelete(rowData.id, rowData.type)}
       />
     </div>
   );
@@ -174,36 +179,8 @@ export default function QuestionsPage() {
           </div>
         )}
       </Dialog>
-
-      <Dialog
-        header="Confirm Delete"
-        visible={!!deleteData}
-        style={{ width: "25rem" }}
-        modal
-        onHide={() => setDeleteData(null)}
-        footer={
-          <div className="flex justify-content-end gap-2">
-            <Button
-              label="Cancel"
-              text
-              onClick={() => setDeleteData(null)}
-            />
-            <Button
-              label="Delete"
-              icon="pi pi-trash"
-              severity="danger"
-              onClick={() => handleDelete(deleteData)}
-            />
-          </div>
-        }
-      >
-        {deleteData && (
-          <p>
-            Are you sure you want to delete:  
-            <strong> "{deleteData.statement}"</strong>?
-          </p>
-        )}
-      </Dialog>
     </div>
   );
 }
+
+

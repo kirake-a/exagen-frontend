@@ -12,7 +12,6 @@ export default function SidebarMenu() {
     { label: "Exams", icon: "pi pi-pencil", path: "exams" },
     { label: "Questions", icon: "pi pi-question", path: "questions" },
     { label: "Surveys", icon: "pi pi-chart-bar", path: "surveys" },
-    { label: "Users", icon: "pi pi-users", path: "users" },
   ];
 
   return (

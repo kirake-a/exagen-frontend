@@ -1,42 +1,65 @@
-import React, { useState } from 'react';
-import { Card } from 'primereact/card';
-import { RadioButton } from 'primereact/radiobutton';
-import { InputTextarea } from 'primereact/inputtextarea';
-import { Button } from 'primereact/button';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { Card } from "primereact/card";
+import { RadioButton } from "primereact/radiobutton";
+import { Button } from "primereact/button";
+
+import { getSurveyById, createSurveyResponse } from "../../../common/api/surveyService";
+import type { SurveyResponse } from "../../../common/interfaces/surveyInterfaces";
+
 
 const SurveyResponsePage: React.FC = () => {
+  const { id } = useParams();
+  const [survey, setSurvey] = useState<SurveyResponse | null>(null);
   const [answers, setAnswers] = useState<{ [key: string]: string }>({});
+  const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState(false);
 
-  const quiz = {
-    title: 'Survey Title Example',
-    closedQuestions: [
-      {
-        id: '1',
-        statement: 'What is the capital of France?',
-        options: ['Paris', 'Berlin', 'Madrid'],
-      },
-    ],
-    openQuestions: [
-      {
-        id: '2',
-        statement: 'Explain why the sky appears blue.',
-      },
-    ],
+  useEffect(() => {
+    console.log("IDDDD",id);
+    const fetchSurvey = async () => {
+      if (!id) return;
+      setLoading(true);
+
+      const res = await getSurveyById(id);
+
+      setSurvey(res.data);
+      setLoading(false);
+    };
+
+    fetchSurvey();
+  }, [id]);
+
+  const handleAnswer = (qId: string, value: string) => {
+    setAnswers((prev) => ({ ...prev, [qId]: value }));
   };
 
-  const handleAnswer = (id: string, value: string) => {
-    setAnswers((prev) => ({ ...prev, [id]: value }));
+  const handleSubmit = async () => {
+    if (!id) return;
+
+
+    const responseArray = Object.entries(answers).map(([questionId, selectedAnswer]) => ({
+      questionId: Number(questionId),
+      selectedAnswer,
+    }));
+
+    console.log("Payload enviado:", answers);
+
+    const res = await createSurveyResponse(id, responseArray);
+
+    if (res.success) {
+      setSubmitted(true);
+    } else {
+      alert("There was an error submitting your answers.");
+    }
   };
 
-  const handleSubmit = () => {
-    console.log('Mock submission:', answers);
-    setSubmitted(true);
-  };
+  if (loading) return <p className="text-center mt-10">Loading survey...</p>;
+  if (!survey) return <p className="text-center mt-10 text-red-500">Survey not found</p>;
 
   return (
     <div className="p-5">
-      <Card title={quiz.title}>
+      <Card title={survey.title}>
         {submitted ? (
           <p className="text-green-600 font-semibold text-center">
             Thank you for submitting your answers!
@@ -44,10 +67,12 @@ const SurveyResponsePage: React.FC = () => {
         ) : (
           <>
             <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-2">Multiple Choice</h3>
-              {quiz.closedQuestions.map((q) => (
+              <h3 className="text-lg font-semibold mb-2">Select an answer</h3>
+
+              {survey.closedQuestions?.map((q) => (
                 <div key={q.id} className="mb-4">
                   <p className="font-medium mb-1">{q.statement}</p>
+
                   {q.options.map((opt) => (
                     <div key={opt} className="flex items-center mb-1">
                       <RadioButton
@@ -62,21 +87,6 @@ const SurveyResponsePage: React.FC = () => {
                       </label>
                     </div>
                   ))}
-                </div>
-              ))}
-            </div>
-
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-2">Open Questions</h3>
-              {quiz.openQuestions.map((q) => (
-                <div key={q.id} className="mb-4">
-                  <p className="font-medium mb-1">{q.statement}</p>
-                  <InputTextarea
-                    value={answers[q.id] || ''}
-                    onChange={(e) => handleAnswer(q.id, e.target.value)}
-                    rows={3}
-                    className="w-full"
-                  />
                 </div>
               ))}
             </div>

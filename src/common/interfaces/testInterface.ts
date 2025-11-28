@@ -2,7 +2,7 @@ export interface Test {
     id?: number,
     title: string,
     userId?: string,
-    openQuestionsIds:number[],
-    closedQuestionsIds:number[],
+    openQuestionIds:number[],
+    closedQuestionIds:number[],
     categoryId:number
 }

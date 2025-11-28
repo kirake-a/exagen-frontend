@@ -1,5 +1,5 @@
 import axios from 'axios';
-import exagenApiClient from '../config/exagenApiConfig';
+import exagenApiClient from '../config/exagen/exagenApiConfig';
 import type { ResponseWrapper } from '../interfaces/responseWrapper';
 import type { Test } from '../interfaces/testInterface';
 
@@ -16,9 +16,9 @@ export const getTests = async (): Promise<ResponseWrapper<Test>> => {
     }
 }
 
-export const createTest = async (questionData: Test): Promise<ResponseWrapper<Test>> => {
+export const createTest = async (testData: Test): Promise<ResponseWrapper<Test>> => {
     try {
-        const response = await exagenApiClient.post<ResponseWrapper<Test>>('/tests/', questionData);
+        const response = await exagenApiClient.post<ResponseWrapper<Test>>('/tests/', testData);
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
@@ -60,6 +60,6 @@ export const getTestByUserId = async (id: string): Promise<ResponseWrapper<Test>
         if (axios.isAxiosError(error) && error.response) {
             return error.response.data;
         }
-        throw new Error('An unexpected error occurred while fetching the question.');
+        throw new Error('An unexpected error occurred while fetching the test by user id.');
     }
 };

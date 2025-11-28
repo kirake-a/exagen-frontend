@@ -5,17 +5,14 @@ import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { Toast } from "primereact/toast";
 import { Dialog } from "primereact/dialog";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
 
 import { QuestionSelectorDialog } from "../components/QuestionSelectDialog";
 import { CategorySelector } from "../components/CategorySelectorExam";
 import { CreateCategoryDialog } from "../components/CreateCategoryDialog";
 
 import { useCategoriesTest } from "../../../hooks/useCategoriesTest";
-import { useTests } from "../../../hooks/useTest";
 import { createCategoryTest } from "../../../common/api/categoryTestService";
-import { createTest, deleteTest } from "../../../common/api/testService";
+import { createTest } from "../../../common/api/testService";
 
 export default function ExamCreationPage() {
   const navigate = useNavigate();
@@ -29,11 +26,10 @@ export default function ExamCreationPage() {
   const [selectedClosedQuestions, setSelectedClosedQuestions] = useState<number[]>([]);
   const [selectedOpenQuestions, setSelectedOpenQuestions] = useState<number[]>([]);
 
-  const { tests, fetchTests } = useTests();
   const [title, setTitle] = useState("");
 
   const [viewDialog, setViewDialog] = useState(false);
-  const [selectedTest, setSelectedTest] = useState<any>(null);
+  const [ selectedTest ] = useState<any>(null);
 
 
   const showToast = (severity: string, summary: string, detail: string) => {
@@ -50,6 +46,18 @@ export default function ExamCreationPage() {
     }
   };
 
+  const handleSelect = (id: number, type: "open" | "closed") => {
+    if (type === "open") {
+      setSelectedOpenQuestions((prev) =>
+        prev.includes(id) ? prev : [...prev, id]
+      );
+    } else {
+      setSelectedClosedQuestions((prev) =>
+        prev.includes(id) ? prev : [...prev, id]
+      );
+    }
+  };
+
   const handleCreateExam = async () => {
     if (!selectedCategory) {
       showToast("warn", "Missing Category", "Select a category first.");
@@ -60,12 +68,13 @@ export default function ExamCreationPage() {
       showToast("warn", "Missing Title", "Enter a title for the exam.");
       return;
     }
+   
 
     const payload = {
       title,
       categoryId: selectedCategory,
-      openQuestionsIds: selectedOpenQuestions,
-      closedQuestionsIds: selectedClosedQuestions,
+      openQuestionIds: selectedOpenQuestions,
+      closedQuestionIds: selectedClosedQuestions,
     };
 
     const res = await createTest(payload);
@@ -75,24 +84,11 @@ export default function ExamCreationPage() {
       setSelectedClosedQuestions([]);
       setSelectedOpenQuestions([]);
       setTitle("");
-      fetchTests();
     } else {
       showToast("error", "Error", "Could not create exam.");
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this exam?")) return;
-
-    // const res = await deleteTest(id);
-
-    // if (res.success) {
-    //   showToast("success", "Deleted", "Exam deleted successfully.");
-    //   fetchTests();
-    // } else {
-    //   showToast("error", "Error", "Could not delete exam.");
-    // }
-  };
 
   return (
     <div className="p-5">
@@ -164,7 +160,6 @@ export default function ExamCreationPage() {
         />
       </div>
 
-      {/* VIEW DIALOG */}
       <Dialog
         header="Exam Details"
         visible={viewDialog}
@@ -211,10 +206,7 @@ export default function ExamCreationPage() {
       <QuestionSelectorDialog
         visible={showSelector}
         onHide={() => setShowSelector(false)}
-        // onSelectedClosed={setSelectedClosedQuestions}
-        // onSelectedOpen={setSelectedOpenQuestions}
-        // selectedClosed={selectedClosedQuestions}
-        // selectedOpen={selectedOpenQuestions}
+        onSelect={handleSelect}
       />
     </div>
   );

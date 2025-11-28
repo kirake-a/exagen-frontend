@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { ResponseWrapper } from '../interfaces/responseWrapper';
 import type { UserResponse } from '../interfaces/userInterfaces';
-import authApiClient from '../config/auth/authPublicApiConfig';
+import authApiClient from '../config/auth/authApiConfig';
 
 export const getMe = async (): Promise<ResponseWrapper<UserResponse>> => {
   try {
