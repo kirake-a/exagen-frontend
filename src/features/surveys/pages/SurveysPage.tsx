@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
@@ -9,9 +9,11 @@ import { useNavigate } from "react-router-dom";
 import { useSurveys } from "../../../hooks/useSurvey"; 
 import { deleteSurvey } from "../../../common/api/surveyService";
 import type { SurveyResponse } from "../../../common/interfaces/surveyInterfaces";
+import type { Toast } from "primereact/toast";
 
 export default function SurveysPage() {
   const navigate = useNavigate();
+  const toast = useRef<Toast>(null);
 
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<"all" | "ACTIVE" | "INACTIVE">("all");
@@ -35,8 +37,14 @@ const filteredSurveys = useMemo(() => {
 }, [surveys, status, search]);
 
   const handleDelete = async (id: string) => {
-    await deleteSurvey(id);
-    fetchSurveys();
+    const confirmed = confirm("Are you sure you want to delete this survey?");
+    if (!confirmed) return;
+
+    const res = await deleteSurvey(id);
+    if(res.success){
+      fetchSurveys();
+    }
+    
   };
 
   const actionTemplate = (row: SurveyResponse) => (
@@ -49,7 +57,23 @@ const filteredSurveys = useMemo(() => {
         tooltip="See"
         onClick={() => navigate(`/surveys-summary/${row.id}`)}
       />
-
+      <Button
+        icon="pi pi-copy"
+        rounded
+        text
+        severity="secondary"
+        tooltip="Copy Link"
+        onClick={() => {
+          const link = `${window.location.origin}/response-surveys/${row.id}`;
+          navigator.clipboard.writeText(link);
+          toast.current?.show({
+            severity: "success",
+            summary: "Link Copied",
+            detail: link,
+            life: 2000,
+          });
+        }}
+      />
       <Button
         icon="pi pi-trash"
         rounded

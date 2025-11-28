@@ -13,12 +13,14 @@ export interface QuestionRequest {
 export interface OpenQuestion {
   id?: number, 
   statement: string,
-  response: string
+  response: string,
+  categoryId: number,
 }
 
 export interface ClosedQuestion {
   id?: number, 
   statement: string, 
   options: string[],
-  correctAnswer: string
+  correctAnswer: string, 
+  categoryId: number,
 }

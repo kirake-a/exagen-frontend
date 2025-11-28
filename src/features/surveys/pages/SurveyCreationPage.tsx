@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
@@ -7,33 +7,42 @@ import { useNavigate } from 'react-router-dom';
 
 import { createSurveys } from '../../../common/api/surveyService';
 import type { Survey } from '../../../common/interfaces/surveyInterfaces';
-import { useQuestions } from '../../../hooks/useQuestion';
+import type { Toast, ToastMessage } from 'primereact/toast';
+import { ClosedQuestionSelectorDialog } from './components/ClosedQuestionSelectorDialog';
 
 const SurveyCreationPage: React.FC = () => {
   const navigate = useNavigate();
-
+  const toast = useRef<Toast>(null);
   const [title, setTitle] = useState('');
   const [status, setStatus] = useState<"ACTIVE" | "INACTIVE">("ACTIVE");
   const [selectedQuestions, setSelectedQuestions] = useState<number[]>([]);
-
-  const { questions, loading } = useQuestions();
+  const [dialogVisible, setDialogVisible] = useState(false);
 
   const statusOptions = [
     { label: "Active", value: "ACTIVE" },
     { label: "Inactive", value: "INACTIVE" },
   ];
 
-  const handleToggleQuestion = (id: number) => {
+  const showToast = (
+    severity: ToastMessage['severity'],
+    summary: string,
+    detail: string
+  ) => {
+    toast.current?.show({ severity, summary, detail, life: 2500 });
+  };
+
+
+  const handleSelectFromDialog = (questionId: number) => {
     setSelectedQuestions((prev) =>
-      prev.includes(id)
-        ? prev.filter((q) => q !== id)
-        : [...prev, id]
+      prev.includes(questionId)
+        ? prev
+        : [...prev, questionId]
     );
   };
 
   const handleSave = async () => {
     if (!title.trim()) {
-      alert("Title is required");
+      showToast("warn", "Title", "Title is required")
       return;
     }
 
@@ -48,10 +57,10 @@ const SurveyCreationPage: React.FC = () => {
     const res = await createSurveys(payload);
 
     if (res?.data) {
-      alert("Survey created successfully!");
+      showToast("success", "Survey Created", "Survey created sucessfuly" )
       navigate("/surveys");
     } else {
-      alert("Error creating survey");
+      showToast("error", "Error", "Could not create survey" )
     }
   };
 
@@ -85,27 +94,38 @@ const SurveyCreationPage: React.FC = () => {
               className="w-full"
             />
           </div>
-          <div>
-            <label className="font-semibold block mb-2">Closed Questions</label>
+          <div className="p-4">
+            <h2>Closed Questions</h2>
+            <Button 
+              label="Add Question" 
+              severity="info"
+              onClick={() => setDialogVisible(true)}
+            />
+              <div className="mt-3">
+                {selectedQuestions.length === 0 && (
+                  <p>No questions selected.</p>
+                )}
 
-            {loading && <p>Loading questions...</p>}
+                {selectedQuestions.map((id) => (
+                  <div key={id} className="flex items-center gap-3 mb-2">
+                    <span>Question ID: {id}</span>
+                    <Button
+                      icon="pi pi-trash"
+                      severity="danger"
+                      text
+                      onClick={() =>
+                        setSelectedQuestions((prev) => prev.filter((q) => q !== id))
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
 
-            {!loading && questions?.closedQuestions?.length === 0 && (
-              <p>No closed questions available.</p>
-            )}
-
-            {!loading &&
-              questions?.closedQuestions?.map((q) => (
-                <div key={q.id} className="flex gap-2 align-items-center mb-2">
-                  <input
-                    type="checkbox"
-                    checked={selectedQuestions.includes(q.id)}
-                    onChange={() => handleToggleQuestion(q.id)}
-                  />
-                  <span>{q.statement}</span>
-                </div>
-              ))
-            }
+            <ClosedQuestionSelectorDialog
+              visible={dialogVisible}
+              onHide={() => setDialogVisible(false)}
+              onSelect={handleSelectFromDialog}
+            />
           </div>
 
         </div>

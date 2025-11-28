@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
-import { Toast } from "primereact/toast";
+import { Toast, type ToastMessage } from "primereact/toast";
 import { Dialog } from "primereact/dialog";
 
 import { QuestionSelectorDialog } from "../components/QuestionSelectDialog";
@@ -32,10 +32,14 @@ export default function ExamCreationPage() {
   const [ selectedTest ] = useState<any>(null);
 
 
-  const showToast = (severity: string, summary: string, detail: string) => {
+  const showToast = (
+    severity: ToastMessage['severity'],
+    summary: string,
+    detail: string
+  ) => {
     toast.current?.show({ severity, summary, detail, life: 2500 });
   };
-
+  
   const handleAddCategory = async (name: string) => {
     const result = await createCategoryTest(name);
     if (result.success) {
