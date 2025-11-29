@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router';
+import { Routes, Route, Navigate } from 'react-router';
 import { LoginPage } from '../../features/auth/pages/LoginPage';
 import { RegisterPage } from '../../features/auth/pages/RegisterPage';
 import { ChangePasswordPage } from '../../features/auth/pages/ChangePasswordPage';
@@ -36,8 +36,7 @@ export const AppRouter = () => {
           </Route>
         </Route>
         <Route path="/respond-surveys/:id" element={<SurveyResponsePage />} />{' '}
-          {/*agregar surveyId a la ruta*/}
-        <Route path="/" element={<DashboardPage />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </AuthProvider>
   );
