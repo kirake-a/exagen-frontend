@@ -30,7 +30,7 @@ const filteredSurveys = useMemo(() => {
   if (!surveys) return [];
   
   return surveys.filter((s) => {
-    if (status !== "all" && s.surveyStatus !== status) return false;
+    if (status !== "all" && s.status !== status) return false;
     if (search.trim() !== "" && !s.title.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
@@ -64,7 +64,7 @@ const filteredSurveys = useMemo(() => {
         severity="secondary"
         tooltip="Copy Link"
         onClick={() => {
-          const link = `${window.location.origin}/response-surveys/${row.id}`;
+          const link = `${window.location.origin}/respond-surveys/${row.id}`;
           navigator.clipboard.writeText(link);
           toast.current?.show({
             severity: "success",
@@ -126,7 +126,7 @@ const filteredSurveys = useMemo(() => {
       >
         <Column field="title" header="Survey Name" />
         <Column field="totalResponses" header="Responses" />
-        <Column header="Status" body={(row) => row.surveyStatus} />
+        <Column header="Status" body={(row) => row.status} />
 
         <Column body={actionTemplate} header="Actions" />
       </DataTable>

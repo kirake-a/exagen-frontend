@@ -11,6 +11,7 @@ export interface SurveyResponse {
     id: string,
     title: string,
     totalResponses:number,
+    status:string,
     closedQuestions: ClosedQuestion[],
 }
 

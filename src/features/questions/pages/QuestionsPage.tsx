@@ -22,8 +22,8 @@ export default function QuestionsPage() {
 
   const statusOptions = [
     { label: "All", value: "all" },
-    { label: "Open", value: "open" },
-    { label: "Closed", value: "closed" },
+    { label: "Open", value: "OPEN" },
+    { label: "Closed", value: "CLOSED" },
   ];
 
   const allQuestions = useMemo(() => {
@@ -44,7 +44,6 @@ export default function QuestionsPage() {
     return [...closed, ...open];
   }, [questions]);
 
-  // Filtros
   const filteredQuestions = useMemo(() => {
     return allQuestions.filter((q) => {
       const matchesSearch = q.statement
@@ -128,8 +127,8 @@ export default function QuestionsPage() {
           header="Type"
           body={(row) => (
             <Tag
-              value={row.type === "closed" ? "Closed" : "Open"}
-              severity={row.type === "closed" ? "info" : "success"}
+              value={row.type === "CLOSED" ? "Closed" : "Open"}
+              severity={row.type === "CLOSED" ? "info" : "success"}
             />
           )}
         />
@@ -155,7 +154,7 @@ export default function QuestionsPage() {
               <p>{viewData.statement}</p>
             </div>
 
-            {viewData.type === "closed" && (
+            {viewData.type === "CLOSED" && (
               <>
                 <div>
                   <strong>Options:</strong>
@@ -173,7 +172,7 @@ export default function QuestionsPage() {
               </>
             )}
 
-            {viewData.type === "open" && (
+            {viewData.type === "OPEN" && (
               <Tag value="Open Question" severity="info" />
             )}
           </div>

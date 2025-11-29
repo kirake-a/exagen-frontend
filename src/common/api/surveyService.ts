@@ -5,9 +5,9 @@ import type { AnswerSurvey, Survey, SurveyAnswerResponse, SurveyResponse } from 
 import exagenApiPublicClient from '../config/exagen/exagenApiPublicConfig';
 
 
-export const getSurveys = async (): Promise<ResponseWrapper<Survey[]>> => {
+export const getSurveys = async (): Promise<ResponseWrapper<SurveyResponse[]>> => {
     try {  
-        const response = await exagenApiClient.get<ResponseWrapper<Survey[]>>('/surveys/');
+        const response = await exagenApiClient.get<ResponseWrapper<SurveyResponse[]>>('/surveys/');
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {

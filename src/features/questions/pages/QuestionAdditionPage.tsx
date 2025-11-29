@@ -174,7 +174,7 @@ export const QuestionAdditionPage: React.FC = () => {
 
     if (res.success) {
       showMessage('success', 'Saved', 'Questions successfully created!');
-      setTimeout(() => navigate('/create-exams'), 1000);
+      setTimeout(() => navigate(-1), 1000);
     } else {
       showMessage('error', 'Error', res.message ?? 'Error while saving.');
     }

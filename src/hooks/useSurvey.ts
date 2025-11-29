@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { getSurveys } from "../common/api/surveyService";
-import type { Survey } from "../common/interfaces/surveyInterfaces";
+import type { SurveyResponse } from "../common/interfaces/surveyInterfaces";
 
 export const useSurveys = () => {
-  const [surveys, setSurveys] = useState<Survey[]>();
+  const [surveys, setSurveys] = useState<SurveyResponse[]>();
   const [loading, setLoading] = useState(true);
 
   const fetchSurveys = async () => {

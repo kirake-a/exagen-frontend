@@ -14,7 +14,7 @@ export interface OpenQuestion {
   id?: number, 
   statement: string,
   response: string,
-  categoryId: number,
+  categoryId?: number,
 }
 
 export interface ClosedQuestion {
@@ -22,5 +22,5 @@ export interface ClosedQuestion {
   statement: string, 
   options: string[],
   correctAnswer: string, 
-  categoryId: number,
+  categoryId?: number,
 }

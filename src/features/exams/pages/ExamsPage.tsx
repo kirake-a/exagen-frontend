@@ -107,7 +107,6 @@ export default function ExamsPage() {
 
       <DataTable value={tests} responsiveLayout="scroll">
         <Column field="title" header="Exam Name" />
-        <Column field="dateCreated" header="Date Created" />
         <Column body={actionTemplate} header="Actions" style={{ width: "120px" }} />
       </DataTable>
     </div>
